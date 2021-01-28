@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "owntwin"
+version = "0.1.0"
+description = "User-driven digital twin framework."
+authors = ["Kentaro Ozeki <kentaro.ozeki+dev@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+mercantile = "^1.1.6"
+geopandas = "^0.8.1"
+requests = "^2.24.0"
+svgwrite = "^1.4"
+geopy = "^2.0.0"
+scour = "^0.38.1"
+Pillow = "^8.0.1"
+typer = "^0.3.2"
+loguru = "^0.5.3"
+halo = "^0.0.31"
+colorama = "^0.4.4"
+InquirerPy = "^0.1.0"
+importlib-resources = "^5.1.0"
+xdg = "^5.0.1"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^20.8b1", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+owntwin = "owntwin.cli:app"
