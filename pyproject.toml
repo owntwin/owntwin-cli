@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "User-driven digital twin framework."
 authors = ["Kentaro Ozeki <kentaro.ozeki+dev@gmail.com>"]
 license = "MIT"
+repository = "https://github.com/owntwin/owntwin-cli"
+homepage = "https://github.com/owntwin/owntwin-cli"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
