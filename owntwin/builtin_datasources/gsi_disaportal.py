@@ -1,10 +1,9 @@
-from time import sleep
 from pathlib import Path
-
-from loguru import logger
-import requests
+from time import sleep
 
 import owntwin.builder.utils as utils
+import requests
+from loguru import logger
 from owntwin.builder.tile import TileData
 
 KK_KEIKAI_URL = (
@@ -13,6 +12,7 @@ KK_KEIKAI_URL = (
 KK_HOUKAI_URL = (
     "https://disaportaldata.gsi.go.jp/raster/05_kyukeisyachihoukai/{z}/{x}/{y}.png"
 )
+HIGHTIDE_URL = "https://disaportaldata.gsi.go.jp/raster/03_hightide_l2_shinsuishin_data/{z}/{x}/{y}.png"
 
 
 class Downloader(object):
@@ -66,4 +66,9 @@ class Downloader(object):
     def download_kyukeisha_houkai(self, tiles, cache=True):
         return self._download_base(
             KK_HOUKAI_URL, "kk_houkai-{z}_{x}_{y}.png", tiles, cache=cache
+        )
+
+    def download_hightide(self, tiles, cache=True):
+        return self._download_base(
+            HIGHTIDE_URL, "hightide-{z}_{x}_{y}.png", tiles, cache=cache
         )

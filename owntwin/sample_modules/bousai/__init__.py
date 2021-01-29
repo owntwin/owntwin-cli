@@ -7,8 +7,8 @@ id = "owntwin/sample_modules/bousai"
 
 module = {
     "name": "防災・災害対応",
-    "description": None,
-    "license": None,
+    "description": "レイヤーは国土地理院ハザードマップポータルサイト「重ねるハザードマップ」のオープンデータです。凡例は <https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html> を参照してください。",
+    "license": "ハザードマップポータルサイト <https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html>",
     "actions": [
         {
             "type": "link",
@@ -35,6 +35,13 @@ module = {
             "id": "kk_houkai",
             "name": "急傾斜地崩壊危険箇所",
             "path": "assets/kk_houkai.png",
+            "format": "png",
+            "enabled": True,
+        },
+        {
+            "id": "hightide",
+            "name": "高潮浸水想定区域",
+            "path": "assets/hightide.png",
             "format": "png",
             "enabled": True,
         },
@@ -73,3 +80,8 @@ def add(bbox, package, cache_dir):
     merged = utils.stitch_tiles(tiledata)
     cropped = utils.crop_img(merged, layer_bbox, basemap_bbox)
     cropped.save(package.assets.joinpath("kk_houkai.png"), "png")
+
+    tiledata = dl.download_hightide(tiles)
+    merged = utils.stitch_tiles(tiledata)
+    cropped = utils.crop_img(merged, layer_bbox, basemap_bbox)
+    cropped.save(package.assets.joinpath("hightide.png"), "png")
