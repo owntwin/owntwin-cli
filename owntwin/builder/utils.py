@@ -14,10 +14,11 @@ def meter_to_lat(meter, lat, lng):
 
 
 def meter_to_lng(meter, lat, lng):
+    lat_radians = math.radians(lat)
     lng_dist = geopy.distance.distance(
-        (lat, lng), (lat, lng + 1 / (111111 * math.cos(lat)))
+        (lat, lng), (lat, lng + 1 / (111111 * math.cos(lat_radians)))
     ).m
-    approx_degree_per_meter = (1 / (111111 * math.cos(lat))) / lng_dist
+    approx_degree_per_meter = (1 / (111111 * math.cos(lat_radians))) / lng_dist
     return meter * approx_degree_per_meter
 
 
@@ -27,6 +28,18 @@ def tiles_bounds(tiles):
     ul = [mercantile.bounds(tile_ul).west, mercantile.bounds(tile_ul).north]
     br = [mercantile.bounds(tile_br).east, mercantile.bounds(tile_br).south]
     bbox = [ul[0], br[1], br[0], ul[1]]
+
+    # l = float('inf')
+    # b = float('inf')
+    # r = 0
+    # u = 0
+    # for tile in tiles:
+    #     l = min(l, mercantile.bounds(tile).west)
+    #     b = min(b, mercantile.bounds(tile).south)
+    #     r = max(r, mercantile.bounds(tile).east)
+    #     u = max(u, mercantile.bounds(tile).north)
+    # bbox = [l, b, r, u]
+
     return bbox
 
 

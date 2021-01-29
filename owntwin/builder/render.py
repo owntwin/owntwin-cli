@@ -7,7 +7,7 @@ from scour import scour
 
 def render(gdf, outfile, filter=None, optimize=True):
     logger.info(gdf.crs)
-    gdf = gdf.to_crs(epsg=3395)
+    gdf = gdf.to_crs(epsg=3857)  # 3395
 
     logger.info(gdf.head())
 

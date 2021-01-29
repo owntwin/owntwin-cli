@@ -9,7 +9,7 @@ def extract_meshed_level(gdf, outfile="levelmap.json"):
     ny_seg = 100
 
     logger.info(gdf.crs)
-    gdf = gdf.to_crs(epsg=3395)
+    gdf = gdf.to_crs(epsg=3857)  # 3395
 
     logger.info(gdf.head())
 

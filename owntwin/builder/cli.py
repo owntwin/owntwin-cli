@@ -38,6 +38,8 @@ def load_config():
 def init(dirname: str = typer.Argument(".")):
     dirname = Path(dirname)
 
+    basemap_zoom = 18  # TODO: Fix
+
     if Path(dirname.joinpath(FILENAME)).exists():
         typer.Abort()
 
@@ -88,12 +90,24 @@ def init(dirname: str = typer.Argument(".")):
             filter=lambda x: float(x),
             validate=NumberValidator(float_allowed=True),
         ).execute()
+
+        # bbox = [
+        #     lng + utils.meter_to_lng(size, lat, lng),  # east
+        #     lat - utils.meter_to_lat(size, lat, lng),  # south
+        #     lng - utils.meter_to_lng(size, lat, lng),  # west
+        #     lat + utils.meter_to_lat(size, lat, lng),  # north
+        # ]
         bbox = [
-            lng + utils.meter_to_lng(size, lat, lng),
-            lat - utils.meter_to_lat(size, lat, lng),
-            lng - utils.meter_to_lng(size, lat, lng),
-            lat + utils.meter_to_lat(size, lat, lng),
+            lng - utils.meter_to_lng(size, lat, lng),  # west
+            lat - utils.meter_to_lat(size, lat, lng),  # south
+            lng + utils.meter_to_lng(size, lat, lng),  # east
+            lat + utils.meter_to_lat(size, lat, lng),  # north
         ]
+        tiles = mercantile.tiles(*bbox, basemap_zoom)
+        tiles = list(tiles)
+        basemap_bbox = utils.tiles_bounds(tiles)
+        bbox = basemap_bbox
+
         typer.echo(
             "  Left (lng): {}\n  Bottom (lat): {}\n  Right (lng): {}\n  Top (lat): {}".format(
                 *bbox
