@@ -27,7 +27,11 @@ app.command("export")(owntwin.builder.cli.export)
 
 
 @app.command("view")
-def view(dirname: str = typer.Argument("."), port: int = typer.Argument(8000)):
+def view(
+    dirname: str = typer.Argument("."),
+    port: int = typer.Option(8000),
+    no_terrain: bool = typer.Option(False, "--no-terrain", help="Disable terrain"),
+):
     import socketserver
     from http.server import SimpleHTTPRequestHandler
 
@@ -74,14 +78,16 @@ def view(dirname: str = typer.Argument("."), port: int = typer.Argument(8000)):
     Handler = partial(
         RequestHandler,
         # directory=Path(__file__).parent.joinpath("./viewer/owntwin/"),
-        directory=importlib_resources.files("owntwin.viewer.owntwin").joinpath(".")
+        directory=importlib_resources.files("owntwin.viewer.owntwin").joinpath("."),
     )
 
     Server = socketserver.TCPServer
     Server.allow_reuse_address = True
 
     with Server(("localhost", port), Handler) as httpd:
-        print(f"Started preview on http://localhost:{port}/?twin=http://localhost:{port}/__/")
+        print(
+            f"Started preview on http://localhost:{port}/?twin=http://localhost:{port}/__/{'&no-terrain' if no_terrain else ''}"
+        )
         httpd.serve_forever()
 
 
