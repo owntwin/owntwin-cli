@@ -67,10 +67,15 @@ def init(dirname: str = typer.Argument(".")):
         if not location_keywords:
             break
 
-        geolocator = Nominatim(user_agent="synoikismos-dev")
+        geolocator = Nominatim(user_agent="owntwin-cli")
         location_candidates = geolocator.geocode(
             location_keywords, exactly_one=False, limit=5
         )
+
+        if not location_candidates:
+            typer.echo("Not found. Please Try again.")
+            continue
+
         location = inquirer.select(
             message="Select nearby location:",
             choices=list(
