@@ -1,4 +1,6 @@
+import codecs
 import json
+import os
 import shutil
 from importlib import import_module
 from pathlib import Path
@@ -23,15 +25,26 @@ from xdg import xdg_cache_home
 app = typer.Typer()
 
 FILENAME = "twin.json"
-CACHE_DIR = xdg_cache_home().joinpath("owntwin/")
+
+if os.name == "nt":
+    CACHE_DIR = Path(os.path.expandvars("%APPDATA%/owntwin/cache"))
+else:
+    CACHE_DIR = xdg_cache_home().joinpath("owntwin/")
 
 if not CACHE_DIR.exists():
-    CACHE_DIR.mkdir()
+    CACHE_DIR.mkdir(parents=True)
+
 
 def load_config():
     with open(FILENAME, "r") as f:
         twin = json.load(f)
     return twin
+
+
+def save_config(config, path):
+    # NOTE: Use codecs.open for win
+    with codecs.open(path, "w", "utf-8") as f:
+        json.dump(config, f, ensure_ascii=False, indent=2)
 
 
 @app.command("init")
@@ -166,8 +179,7 @@ def init(dirname: str = typer.Argument(".")):
     if not dirname.exists():
         dirname.mkdir()
 
-    with open(dirname.joinpath(FILENAME), "w") as f:
-        json.dump(twin, f, ensure_ascii=False, indent=2)
+    save_config(twin, dirname.joinpath(FILENAME))
 
 
 @app.command("add-terrain")
@@ -240,8 +252,7 @@ def add(module_names: List[str]):
     if modules_append:
         for (module_name, module) in modules_append:
             twin["modules"][module_name] = module
-        with open(FILENAME, "w") as f:
-            json.dump(twin, f, ensure_ascii=False, indent=2)
+        save_config(twin, FILENAME)
 
 
 @app.command("export")
@@ -260,7 +271,12 @@ def export(dirname: str = typer.Argument(".")):
                 ignore=shutil.ignore_patterns(".DS_Store"),
             )
         else:
-            if not any([entry.match(exclude) for exclude in ["twin.json", "assets", ".DS_Store"]]):
+            if not any(
+                [
+                    entry.match(exclude)
+                    for exclude in ["twin.json", "assets", ".DS_Store"]
+                ]
+            ):
                 shutil.copy(entry, dirname)
     spinner.succeed(text="Done!")
     spinner.stop()
