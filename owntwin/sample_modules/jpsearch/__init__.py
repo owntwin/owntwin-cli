@@ -15,7 +15,7 @@ module = {
         {
             "type": "link",
             "text": "位置情報でジャパンサーチを検索",
-            "href": "https://beta.owntwin.com/resolver/jpsearch-geohash",
+            "href": "https://beta.owntwin.com/resolver/jpsearch",
             "params": [["geohash", "geohash"]],
         },
     ],
