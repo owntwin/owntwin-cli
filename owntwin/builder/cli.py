@@ -2,6 +2,7 @@ import codecs
 import json
 import os
 import shutil
+from collections import namedtuple
 from importlib import import_module
 from pathlib import Path
 from typing import List
@@ -64,11 +65,7 @@ def init(dirname: str = typer.Argument(".")):
     uid = inquirer.text(message="Twin ID:", default=shortdirname).execute()
 
     location_keywords = None
-    location = {
-        "latitude": None,
-        "longitude": None,
-        "address": None,
-    }
+    location = None
     bbox = []
     default_name = ""
 
@@ -100,7 +97,24 @@ def init(dirname: str = typer.Argument(".")):
         if location:
             break
 
-    if location_keywords:
+    if not location_keywords:
+
+        def validate(text):
+            try:
+                return len(tuple(map(lambda x: float(x.strip()), text.split(",")))) == 2
+            except:
+                return False
+
+        location_coordinate = inquirer.text(
+            message="Location coordinate [latitude, longitude] (leave blank to skip):",
+            validate=validate,
+            filter=lambda text: tuple(map(lambda x: float(x.strip()), text.split(","))),
+        ).execute()
+        location = namedtuple("location", ["latitude", "longitude", "address"])
+        location.latitude, location.longitude = location_coordinate
+        location.address = ""
+
+    if location:
         lat, lng = location.latitude, location.longitude
         # print(location, lat, lng)
         size = inquirer.text(
