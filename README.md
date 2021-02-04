@@ -1,12 +1,17 @@
 # OwnTwin CLI
 
-OwnTwin CLI is a toolchain for OwnTwin, a user-driven digital twin framework.
+[![PyPI version](https://badge.fury.io/py/owntwin.svg)](https://pypi.python.org/pypi/owntwin/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/owntwin.svg)](https://pypistats.org/packages/owntwin)
+
+OwnTwin CLI is a toolchain for [OwnTwin](https://github.com/owntwin/owntwin), a user-driven digital twin framework.
 
 ## Installation
 
 ```
 pip install owntwin
 ```
+
+_Note for Windows users:_ [Fiona](https://github.com/Toblerity/Fiona#installation) is required to be preinstalled.
 
 ## Usage
 
@@ -17,8 +22,5 @@ owntwin init
 owntwin add-terrain
 owntwin add [module names...]
 owntwin export
-```
-
-```
 owntwin view
 ```
