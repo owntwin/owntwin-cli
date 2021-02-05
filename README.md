@@ -1,6 +1,6 @@
 # OwnTwin CLI
 
-[![PyPI version](https://badge.fury.io/py/owntwin.svg)](https://pypi.python.org/pypi/owntwin/)
+[![PyPI](https://img.shields.io/pypi/v/owntwin.svg)](https://pypi.python.org/pypi/owntwin/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/owntwin.svg)](https://pypistats.org/packages/owntwin)
 
 OwnTwin CLI is a toolchain for [OwnTwin](https://github.com/owntwin/owntwin), a user-driven digital twin framework.
