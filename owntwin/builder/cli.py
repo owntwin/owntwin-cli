@@ -173,6 +173,7 @@ def init(dirname: str = typer.Argument(".")):
         "building": {
             "path": "assets/buildings.json",
         },
+        "properties": {},
         "modules": {},
     }
 
@@ -249,7 +250,9 @@ def add(module_names: List[str]):
                     typer.style(module.id, fg=typer.colors.GREEN, bold=True)
                 )
             )
-            modules_append.append((module.id, module.module))
+            modules_append.append(
+                (module.id, module.definition, module.default_properties)
+            )
             package = Package(".")
             module.add(
                 twin["bbox"],
@@ -264,8 +267,24 @@ def add(module_names: List[str]):
     spinner.stop()
 
     if modules_append:
-        for (module_name, module) in modules_append:
-            twin["modules"][module_name] = module
+        for (module_name, definition, default_properties) in modules_append:
+            if not twin["modules"].get(module_name, None):
+                twin["modules"][module_name] = {}
+
+            twin["modules"][module_name]["version"] = "^{}".format(
+                definition["version"]
+            )  # TODO: Fix
+
+            if not twin.get("properties", None):
+                twin["properties"] = {}
+
+            for key, value in default_properties.items():
+                ns_key = "{}:{}".format(module_name, key)
+                if not twin["properties"].get(ns_key, None):
+                    twin["properties"][ns_key] = value
+
+            twin["modules"][module_name]["definition"] = definition
+
         save_config(twin, FILENAME)
 
 

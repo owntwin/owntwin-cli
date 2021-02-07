@@ -4,9 +4,10 @@ from loguru import logger
 from owntwin.builder.render import render_full
 from owntwin.builtin_datasources import gsi
 
-id = "owntwin/base"
+id = "owntwin.base"
 
-module = {
+definition = {
+    "version": "0.1.0",
     "name": "基本",
     "description": """国土地理院ベクトルタイル提供実験による「基盤地図情報_基本項目」に基づくベースマップを含む基本モジュールです。
 
@@ -14,23 +15,30 @@ module = {
     "license": "https://github.com/gsi-cyberjapan/vector-tile-experiment#%E6%8F%90%E4%BE%9B%E3%81%AE%E4%BD%8D%E7%BD%AE%E3%81%A5%E3%81%91",
     "actions": [
         {
+            "id": "suggestion",
             "type": "link",
             "text": "この場所の情報修正を提案",
-            "href": None,
-            "default_params": [],
-            "params": [],
+            "fields": ["name", "iri"],
         }
     ],
     "layers": [
         {
             "id": "basemap",
             "name": "ベースマップ",
+            "levels": [0],
             "path": "assets/basemap.svg",
             "format": "svg",
-            "levels": [0],
-            "enabled": True,
         },
     ],
+}
+
+default_properties = {
+    "actions.suggestion.href": None,
+    "actions.suggestion.fields.assign_to": {
+        "name": None,
+        "iri": None,
+    },
+    "layers.basemap.enabled": True,
 }
 
 
