@@ -50,10 +50,6 @@ definition = {
 
 default_properties = {
     "actions.manual.href": None,
-    "actions.manual.fields.assign_to": {
-        "name": None,
-        "iri": None,
-    },
     "actions.anpi.href": None,
     "actions.anpi.fields.assign_to": {
         "name": None,
