@@ -163,10 +163,6 @@ def init(dirname: str = typer.Argument(".")):
         "iri": iri,
         "description": description,
         "bbox": bbox,
-        "canvas": {
-            "width": 1024,
-            "height": 1024,
-        },
         "terrain": {
             "path": "assets/levelmap.json",
         },
