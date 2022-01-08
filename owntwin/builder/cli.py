@@ -96,18 +96,7 @@ def init(dirname: str = typer.Argument(".")):
             validate=NumberValidator(float_allowed=True),
         ).execute()
 
-        # bbox = [
-        #     lng + utils.meter_to_lng(size, lat, lng),  # east
-        #     lat - utils.meter_to_lat(size, lat, lng),  # south
-        #     lng - utils.meter_to_lng(size, lat, lng),  # west
-        #     lat + utils.meter_to_lat(size, lat, lng),  # north
-        # ]
-        bbox = [
-            lng - utils.meter_to_lng(size, lat, lng),  # west
-            lat - utils.meter_to_lat(size, lat, lng),  # south
-            lng + utils.meter_to_lng(size, lat, lng),  # east
-            lat + utils.meter_to_lat(size, lat, lng),  # north
-        ]
+        bbox = utils.bbox_from_center(lat, lng, size)
         tiles = mercantile.tiles(*bbox, basemap_zoom)
         tiles = list(tiles)
         basemap_bbox = utils.tiles_bounds(tiles)

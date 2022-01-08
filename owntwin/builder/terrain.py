@@ -19,7 +19,7 @@ def extract_meshed_level(gdf, outfile="levelmap.json"):
 
     bx = maxx / nx_seg
     by = maxy / ny_seg
-    logger.info(minx, miny, maxx, maxy, bx, by)
+    logger.info([minx, miny, maxx, maxy, bx, by])
 
     res = []
     m = defaultdict(lambda: 0)

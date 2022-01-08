@@ -1,10 +1,27 @@
 import math
 
-from loguru import logger
 import geopandas as gpd
 import geopy.distance
 import mercantile
+from loguru import logger
 from PIL import Image
+
+
+def bbox_from_center(lat: float, lng: float, size: float):
+    # bbox = [
+    #     lng + utils.meter_to_lng(size, lat, lng),  # east
+    #     lat - utils.meter_to_lat(size, lat, lng),  # south
+    #     lng - utils.meter_to_lng(size, lat, lng),  # west
+    #     lat + utils.meter_to_lat(size, lat, lng),  # north
+    # ]
+    bbox = [
+        lng - meter_to_lng(size, lat, lng),  # west
+        lat - meter_to_lat(size, lat, lng),  # south
+        lng + meter_to_lng(size, lat, lng),  # east
+        lat + meter_to_lat(size, lat, lng),  # north
+    ]
+
+    return bbox
 
 
 def meter_to_lat(meter, lat, lng):
