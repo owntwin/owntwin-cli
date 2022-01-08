@@ -1,14 +1,8 @@
-import codecs
 import json
-import os
-import shutil
 from collections import namedtuple
-from importlib import import_module
 from pathlib import Path
 from typing import List
 
-# import importlib.resources  # Strangely not working
-import importlib_resources  # Should be replaced with importlib.resource
 import mercantile
 import owntwin.builder.utils as utils
 import typer
@@ -18,34 +12,13 @@ from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 from InquirerPy.validator import NumberValidator
 from loguru import logger
+from owntwin.builder import commands
+from owntwin.builder.commands import load_config, save_config
 from owntwin.builder.package import Package
-from owntwin.builder.terrain import extract_meshed_level
-from owntwin.builtin_datasources import gsi
-from xdg import xdg_cache_home
 
 app = typer.Typer()
 
-FILENAME = "twin.json"
-
-if os.name == "nt":
-    CACHE_DIR = Path(os.path.expandvars("%APPDATA%/owntwin/cache"))
-else:
-    CACHE_DIR = xdg_cache_home().joinpath("owntwin/")
-
-if not CACHE_DIR.exists():
-    CACHE_DIR.mkdir(parents=True)
-
-
-def load_config():
-    with open(FILENAME, "r") as f:
-        twin = json.load(f)
-    return twin
-
-
-def save_config(config, path):
-    # NOTE: Use codecs.open for win
-    with codecs.open(path, "w", "utf-8") as f:
-        json.dump(config, f, ensure_ascii=False, indent=2)
+FILENAME = commands.FILENAME
 
 
 @app.command("init")
@@ -200,27 +173,14 @@ def add_terrain():
     bbox = twin["bbox"]
     package = Package(".")
 
-    dl = gsi.Downloader(CACHE_DIR)  # TODO: Fix
-
-    basemap_zoom = 18
-    tiles = mercantile.tiles(*bbox, basemap_zoom)  # left, bottom, right, top
-    tiles = list(tiles)
-
-    spinner = Halo(text="", spinner="bouncingBar")
-    spinner.start(
-        "Installing {}".format(typer.style("terrain", fg=typer.colors.GREEN, bold=True))
-    )
-
-    filenames = dl.download_dem5a(tiles)
-    merged = utils.geojson_merge(filenames)
-    # print(merged.head())
-
-    merged.to_file(package.assets.joinpath("merged_dem5a.geojson"), driver="GeoJSON")
-
-    extract_meshed_level(merged, outfile=package.assets.joinpath("levelmap.json"))
-
-    spinner.succeed()
-    spinner.stop()
+    with Halo(
+        text="Installing {}".format(
+            typer.style("terrain", fg=typer.colors.GREEN, bold=True)
+        ),
+        spinner="bouncingBar",
+    ) as spinner:
+        commands.add_terrain(bbox, package)
+        spinner.succeed()
 
 
 @app.command("add")
@@ -230,31 +190,20 @@ def add(module_names: List[str]):
 
     twin = load_config()
 
-    modules_append = []
-
-    builtin_modules_map = {
-        "owntwin.base": "owntwin.builtin_modules.base",
-    }
-
     spinner = Halo(text="", spinner="bouncingBar")
     for module_name in module_names:
-        module_name = builtin_modules_map.get(module_name, module_name)
+        module_name = commands.resolve_module_name(module_name)
         try:
-            module = import_module(module_name)
             spinner.start(
                 "Installing {}".format(
-                    typer.style(module.id, fg=typer.colors.GREEN, bold=True)
+                    typer.style(
+                        module_name,
+                        fg=typer.colors.GREEN,
+                        bold=True,
+                    )
                 )
             )
-            modules_append.append(
-                (module.id, module.definition, module.default_properties)
-            )
-            package = Package(".")
-            module.add(
-                twin["bbox"],
-                package,
-                CACHE_DIR,
-            )
+            commands.add_module(twin, Package("."), module_name)
             spinner.succeed()
         except Exception as err:
             logger.error(err)
@@ -262,53 +211,12 @@ def add(module_names: List[str]):
 
     spinner.stop()
 
-    if modules_append:
-        for (module_name, definition, default_properties) in modules_append:
-            if not twin["modules"].get(module_name, None):
-                twin["modules"][module_name] = {}
-
-            twin["modules"][module_name]["version"] = "^{}".format(
-                definition["version"]
-            )  # TODO: Fix
-
-            if not twin.get("properties", None):
-                twin["properties"] = {}
-
-            for key, value in default_properties.items():
-                ns_key = "{}:{}".format(module_name, key)
-                if not twin["properties"].get(ns_key, None):
-                    twin["properties"][ns_key] = value
-
-            twin["modules"][module_name]["definition"] = definition
-
-        save_config(twin, FILENAME)
-
 
 @app.command("export")
 def export(dirname: str = typer.Argument(".")):
-    # https://importlib-resources.readthedocs.io/en/latest/migration.html
-    path = importlib_resources.files("owntwin.viewer.owntwin")
-    spinner = Halo(text="Exporting...", spinner="bouncingBar")
-    for entry in path.iterdir():
-        logger.info(entry)
-        if entry.is_dir():
-            shutil.copytree(
-                entry,
-                Path(dirname).joinpath(entry.name),
-                dirs_exist_ok=True,  # TODO: Confirm
-                copy_function=shutil.copy,
-                ignore=shutil.ignore_patterns(".DS_Store"),
-            )
-        else:
-            if not any(
-                [
-                    entry.match(exclude)
-                    for exclude in ["twin.json", "assets", ".DS_Store"]
-                ]
-            ):
-                shutil.copy(entry, dirname)
-    spinner.succeed(text="Done!")
-    spinner.stop()
+    with Halo(text="Exporting...", spinner="bouncingBar") as spinner:
+        commands.export(dirname)
+        spinner.succeed(text="Done!")
 
 
 @app.callback()
