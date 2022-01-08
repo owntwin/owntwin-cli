@@ -7,7 +7,7 @@ id = "owntwin.sample_modules.bousai"
 
 definition = {
     "version": "0.1.0",
-    "name": "防災・災害対応",
+    "name": "防災・災害対応（全国）",
     "description": "レイヤーは国土地理院ハザードマップポータルサイト「重ねるハザードマップ」のオープンデータです。凡例は <https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html> を参照してください。",
     "license": "ハザードマップポータルサイト <https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html>",
     "actions": [
