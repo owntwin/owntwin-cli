@@ -3,7 +3,6 @@ from collections import namedtuple
 from pathlib import Path
 from typing import List
 
-import mercantile
 import owntwin.builder.utils as utils
 import typer
 from geopy.geocoders import Nominatim
@@ -25,7 +24,7 @@ FILENAME = commands.FILENAME
 def init(dirname: str = typer.Argument(".")):
     dirname = Path(dirname)
 
-    basemap_zoom = 18  # TODO: Fix
+    basemap_zoom = commands.BASEMAP_ZOOM  # TODO: Fix
 
     if Path(dirname.joinpath(FILENAME)).exists():
         typer.Abort()
@@ -97,10 +96,7 @@ def init(dirname: str = typer.Argument(".")):
         ).execute()
 
         bbox = utils.bbox_from_center(lat, lng, size)
-        tiles = mercantile.tiles(*bbox, basemap_zoom)
-        tiles = list(tiles)
-        basemap_bbox = utils.tiles_bounds(tiles)
-        bbox = basemap_bbox
+        bbox = utils.align_bbox(bbox, basemap_zoom)
 
         typer.echo(
             "  Left (lng): {}\n  Bottom (lat): {}\n  Right (lng): {}\n  Top (lat): {}".format(

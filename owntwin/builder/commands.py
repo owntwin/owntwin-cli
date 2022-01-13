@@ -15,6 +15,7 @@ from owntwin.builder.terrain import extract_meshed_level
 from owntwin.builtin_datasources import gsi
 
 FILENAME = "twin.json"
+BASEMAP_ZOOM = 18  # TODO: Fix
 
 
 def load_config():
@@ -32,7 +33,7 @@ def save_config(config, path):
 def add_terrain(bbox: List[float], package):
     dl = gsi.Downloader(CACHE_DIR)  # TODO: Fix
 
-    basemap_zoom = 18
+    basemap_zoom = BASEMAP_ZOOM
     tiles = mercantile.tiles(*bbox, basemap_zoom)  # left, bottom, right, top
     tiles = list(tiles)
 
@@ -80,6 +81,8 @@ def add_module(twin, package, module_name: str):
     twin["modules"][module_name]["definition"] = definition
 
     save_config(twin, FILENAME)  # TODO: Do not save every time
+
+    return twin
 
 
 def export(dirname: str):

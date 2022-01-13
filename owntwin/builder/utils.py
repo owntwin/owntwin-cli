@@ -7,6 +7,13 @@ from loguru import logger
 from PIL import Image
 
 
+def align_bbox(bbox, basemap_zoom):
+    tiles = mercantile.tiles(*bbox, basemap_zoom)
+    tiles = list(tiles)
+    basemap_bbox = tiles_bounds(tiles)
+    return basemap_bbox
+
+
 def bbox_from_center(lat: float, lng: float, size: float):
     # bbox = [
     #     lng + utils.meter_to_lng(size, lat, lng),  # east
