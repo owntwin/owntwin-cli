@@ -138,7 +138,7 @@ default_properties = {
     },
     "layers.tokyo_bm_hinanjo.enabled": True,
     "layers.tokyo_bm_hinanbasho.enabled": True,
-    "layers.tokyo_bm_firehydrant.enabled": True,
+    "layers.tokyo_bm_firehydrant.enabled": False,
     "layers.tokyo_bm_watertank.enabled": True,
     "layers.suidou_watersupply.enabled": True,
     "layers.hoken_daredemowc.enabled": True,
