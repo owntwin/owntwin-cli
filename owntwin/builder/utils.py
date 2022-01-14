@@ -104,27 +104,27 @@ def crop_img(im, img_bbox, crop_bbox, size=(256, 256)):
     # NOTE: Be aware, larger lat, further north
     # TODO: Fix
     # print(im.size)
-    logger.info(img_bbox)
-    logger.info(crop_bbox)
+    logger.debug(img_bbox)
+    logger.debug(crop_bbox)
     img_ul = (img_bbox[0], img_bbox[3])
     img_br = (img_bbox[2], img_bbox[1])
     px_per_lng = im.size[0] / (img_br[0] - img_ul[0])
     px_per_lat = im.size[1] / (-1 * (img_br[1] - img_ul[1]))
-    logger.info((px_per_lng, px_per_lat))
+    logger.debug((px_per_lng, px_per_lat))
 
     crop_ul = (crop_bbox[0], crop_bbox[3])
     crop_br = (crop_bbox[2], crop_bbox[1])
     relative_crop_ul = (crop_ul[0] - img_ul[0], -1 * (crop_ul[1] - img_ul[1]))
     relative_crop_br = (crop_br[0] - img_ul[0], -1 * (crop_br[1] - img_ul[1]))
-    logger.info((img_ul, crop_ul, crop_br))
-    logger.info((relative_crop_ul, relative_crop_br))
+    logger.debug((img_ul, crop_ul, crop_br))
+    logger.debug((relative_crop_ul, relative_crop_br))
     crop_bbox_in_px = (
         relative_crop_ul[0] * px_per_lng,
         relative_crop_ul[1] * px_per_lat,
         relative_crop_br[0] * px_per_lng,
         relative_crop_br[1] * px_per_lat,
     )
-    logger.info(
+    logger.debug(
         (
             crop_bbox_in_px,
             crop_bbox_in_px[2] - crop_bbox_in_px[0],

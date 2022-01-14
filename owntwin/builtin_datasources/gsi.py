@@ -79,7 +79,7 @@ class Downloader(object):
                 z=tile.z, x=tile.x, y=tile.y
             )
             filename = self.cwd.joinpath(filename)
-            logger.info((url, filename))
+            logger.debug((url, filename))
             if cache and filename.exists():
                 continue
 

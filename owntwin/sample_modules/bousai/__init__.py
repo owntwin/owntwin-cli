@@ -70,7 +70,7 @@ def add(bbox, package, cache_dir):
     # br = [mercantile.bounds(tiles[-1]).east, mercantile.bounds(tiles[-1]).south]
     # basemap_bbox = [*ul, *br]
     basemap_bbox = utils.tiles_bounds(tiles)
-    logger.info(("basemap_bbox", basemap_bbox))
+    logger.debug(("basemap_bbox", basemap_bbox))
 
     zoom = 16
     tiles = mercantile.tiles(*basemap_bbox, zoom)  # left, bottom, right, top
@@ -79,7 +79,7 @@ def add(bbox, package, cache_dir):
     tiles = list(tiles)
     # print(tiles)
     layer_bbox = utils.tiles_bounds(tiles)
-    logger.info(("layer_bbox", layer_bbox))
+    logger.debug(("layer_bbox", layer_bbox))
 
     dl = gsi_disaportal.Downloader(cache_dir)
 

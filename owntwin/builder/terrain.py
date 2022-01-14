@@ -8,10 +8,10 @@ def extract_meshed_level(gdf, outfile="levelmap.json"):
     nx_seg = 100
     ny_seg = 100
 
-    logger.info(gdf.crs)
+    logger.debug(gdf.crs)
     gdf = gdf.to_crs(epsg=3857)  # 3395
 
-    logger.info(gdf.head())
+    logger.debug(gdf.head())
 
     minx, miny, maxx, maxy = gdf.geometry.total_bounds
     gdf.geometry = gdf.geometry.translate(-minx, -miny)
@@ -19,7 +19,7 @@ def extract_meshed_level(gdf, outfile="levelmap.json"):
 
     bx = maxx / nx_seg
     by = maxy / ny_seg
-    logger.info([minx, miny, maxx, maxy, bx, by])
+    logger.debug([minx, miny, maxx, maxy, bx, by])
 
     res = []
     m = defaultdict(lambda: 0)

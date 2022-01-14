@@ -170,13 +170,14 @@ def save_areadata(bbox, url_or_urls, filename, encoding=None, cache=True):
             #     raise
             logger.debug(("resp.apparent_encoding", resp.apparent_encoding))
             encoding = encoding or resp.apparent_encoding
-            data = BytesIO(resp.content)
+            content = resp.content.decode(encoding)
+            data = BytesIO(content.encode("utf-8"))
             if cache:
                 with open(cachefile, "wb") as f:
                     f.write(data.read())
                 data.seek(0)
 
-        df = pd.read_csv(data, sep=",", encoding=encoding)
+        df = pd.read_csv(data, sep=",")
         logger.debug(df.columns)
         # NOTE: NaN in bad rows
         df[["緯度", "経度"]] = df[["緯度", "経度"]].apply(pd.to_numeric, errors="coerce")
@@ -184,7 +185,7 @@ def save_areadata(bbox, url_or_urls, filename, encoding=None, cache=True):
         area_df = area_df.append(
             df.query("@bbox[1] <= 緯度 <= @bbox[3] and @bbox[0] <= 経度 <= @bbox[2]")
         )
-        logger.info(("area_df", area_df))
+        logger.debug(("area_df", area_df))
 
     area_df.to_csv(filename, encoding="utf-8", sep=",")
 
@@ -196,7 +197,7 @@ def add(bbox, package, cache_dir):
     tiles = mercantile.tiles(*bbox, basemap_zoom)  # left, bottom, right, top
     tiles = list(tiles)
     basemap_bbox = utils.tiles_bounds(tiles)
-    logger.info(("basemap_bbox", basemap_bbox))
+    logger.debug(("basemap_bbox", basemap_bbox))
 
     save_areadata(
         basemap_bbox,

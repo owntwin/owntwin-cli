@@ -51,7 +51,7 @@ def add(bbox, package, cache_dir):
     # br = [mercantile.bounds(tiles[-1]).east, mercantile.bounds(tiles[-1]).south]
     # basemap_bbox = [*ul, *br]
     basemap_bbox = utils.tiles_bounds(tiles)
-    logger.info(("basemap_bbox", basemap_bbox))
+    logger.debug(("basemap_bbox", basemap_bbox))
 
     dl = gsi.Downloader(cache_dir)
     filenames = dl.download_fgd(tiles)
@@ -61,7 +61,7 @@ def add(bbox, package, cache_dir):
     #     filenames.append(filename)
 
     merged = utils.geojson_merge(filenames)
-    logger.info(merged.head())
+    logger.debug(merged.head())
 
     merged.to_file(package.assets.joinpath("merged.geojson"), driver="GeoJSON")
 

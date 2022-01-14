@@ -6,15 +6,15 @@ from scour import scour
 
 
 def render(gdf, outfile, filter=None, optimize=True):
-    logger.info(gdf.crs)
+    logger.debug(gdf.crs)
     gdf = gdf.to_crs(epsg=3857)  # 3395
 
-    logger.info(gdf.head())
+    logger.debug(gdf.head())
 
     minx, miny, maxx, maxy = gdf.geometry.total_bounds
     gdf.geometry = gdf.geometry.translate(-minx, -miny)
     minx, miny, maxx, maxy = gdf.geometry.total_bounds
-    logger.info((minx, miny, maxx, maxy))
+    logger.debug((minx, miny, maxx, maxy))
 
     # gdf = gdf.scale(100000, 100000, origin=(0, 0))
 
