@@ -1,12 +1,17 @@
-from loguru import logger
+import os
+from io import BytesIO
+from pathlib import Path
+from time import sleep
+from urllib.parse import urlparse
+
 import mercantile
 import owntwin.builder.utils as utils
+import pandas as pd
 
 # from owntwin.builtin_datasources import gsi_disaportal
 import requests
-import pandas as pd
-from io import BytesIO
-from time import sleep
+from loguru import logger
+from owntwin.builder import CACHE_DIR
 
 id = "owntwin.sample_modules.bousai_tokyo"
 
@@ -145,7 +150,7 @@ default_properties = {
 }
 
 
-def save_areadata(bbox, url_or_urls, filename, encoding=None):
+def save_areadata(bbox, url_or_urls, filename, encoding=None, cache=True):
     if not isinstance(url_or_urls, (list, tuple)):
         urls = [url_or_urls]
     else:
@@ -154,16 +159,24 @@ def save_areadata(bbox, url_or_urls, filename, encoding=None):
     area_df = pd.DataFrame()
 
     for url in urls:
-        resp = requests.get(url)
+        cachefile = Path(CACHE_DIR) / os.path.basename(urlparse(url).path)
+        data = None
+        if cache and cachefile.exists():
+            with open(cachefile, "rb") as f:
+                data = BytesIO(f.read())
+        if not cache or not data:
+            resp = requests.get(url)
+            # if resp.status_code == 404:
+            #     raise
+            logger.debug(("resp.apparent_encoding", resp.apparent_encoding))
+            encoding = encoding or resp.apparent_encoding
+            data = BytesIO(resp.content)
+            if cache:
+                with open(cachefile, "wb") as f:
+                    f.write(data.read())
+                data.seek(0)
 
-        # if resp.status_code == 404:
-        #     raise
-
-        logger.info(("resp.apparent_encoding", resp.apparent_encoding))
-
-        encoding = encoding or resp.apparent_encoding
-
-        df = pd.read_csv(BytesIO(resp.content), sep=",", encoding=encoding)
+        df = pd.read_csv(data, sep=",", encoding=encoding)
         logger.debug(df.columns)
         # NOTE: NaN in bad rows
         df[["緯度", "経度"]] = df[["緯度", "経度"]].apply(pd.to_numeric, errors="coerce")
