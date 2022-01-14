@@ -80,7 +80,7 @@ def add_module(twin, package, module_name: str):
 
     twin["modules"][module_name]["definition"] = definition
 
-    save_config(twin, FILENAME)  # TODO: Do not save every time
+    save_config(twin, package.cwd.joinpath(FILENAME))  # TODO: Do not save every time
 
     return twin
 
