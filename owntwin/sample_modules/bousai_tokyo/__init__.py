@@ -30,6 +30,7 @@ SUIDOU_WATERSUPPLY_URL = "https://www.opendata.metro.tokyo.lg.jp/suidou/R3/kyote
 
 HOKEN_DAREDEMOWC_KOKYO_URL = "https://www.opendata.metro.tokyo.lg.jp/fukushihoken/wc/koukyoshisetsu_barrier-free-wc.csv"
 HOKEN_DAREDEMOWC_STATION_URL = "https://www.opendata.metro.tokyo.lg.jp/fukushihoken/wc/tonaitetsudoueki_barrier-free-wc.csv"
+HOKEN_SHINRYOUKENSA_URL = "https://www.opendata.metro.tokyo.lg.jp/fukushihoken/130001_shinryoukensa20220112.csv"
 
 definition = {
     "version": "0.1.0",
@@ -38,7 +39,8 @@ definition = {
     "license": "避難所、避難場所データ オープンデータ (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000003d0000000093>\n"
     + "東京消防庁 消火栓及び防火水槽等 (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000017d0000000007>\n"
     + "東京都水道局 給水拠点一覧データ (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000019d0000000001>\n"
-    + "東京都福祉保健局 だれでもトイレのバリアフリー情報 (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000062>",
+    + "東京都福祉保健局 だれでもトイレのバリアフリー情報 (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000062>\n"
+    + "東京都福祉保健局  診療・検査医療機関の一覧  (CC-BY-4.0) <https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000095>",
     "actions": [
         {
             "id": "manual",
@@ -131,6 +133,19 @@ definition = {
             "color": 0x06B6D4,
             "size": {"height": 32},
         },
+        {
+            "id": "hoken_shinryoukensa",
+            "name": "診療・検査医療機関",
+            "path": "assets/hoken_shinryoukensa.csv",
+            "format": "csv",
+            "keys": {
+                "lat": "緯度",
+                "lng": "経度",
+                "label": "医療機関名",
+            },
+            "color": 0xE879F9,
+            "size": {"height": 50},
+        },
     ],
 }
 
@@ -146,7 +161,8 @@ default_properties = {
     "layers.tokyo_bm_firehydrant.enabled": False,
     "layers.tokyo_bm_watertank.enabled": True,
     "layers.suidou_watersupply.enabled": True,
-    "layers.hoken_daredemowc.enabled": True,
+    "layers.hoken_daredemowc.enabled": False,
+    "layers.hoken_shinryoukensa.enabled": True,
 }
 
 
@@ -231,4 +247,10 @@ def add(bbox, package, cache_dir):
         [HOKEN_DAREDEMOWC_KOKYO_URL, HOKEN_DAREDEMOWC_STATION_URL],
         package.assets.joinpath("hoken_daredemowc.csv"),
         encoding="cp932",
+    )
+
+    save_areadata(
+        basemap_bbox,
+        [HOKEN_SHINRYOUKENSA_URL],
+        package.assets.joinpath("hoken_shinryoukensa.csv"),
     )
