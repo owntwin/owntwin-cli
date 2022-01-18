@@ -3,37 +3,67 @@ import io
 from loguru import logger
 import svgwrite
 from scour import scour
+import pyproj
+
+NONE = "none"
+WHITE = "#FFFFFF"
+GRAY = "#969696"
 
 
-def render(gdf, outfile, filter=None, optimize=True):
+def render(
+    gdf,
+    outfile,
+    bbox=None,
+    filter=None,
+    optimize=True,
+    fill=NONE,
+    stroke=GRAY,
+    stroke_width=1,
+):
+    gdf = gdf.copy()
     logger.debug(gdf.crs)
     gdf = gdf.to_crs(epsg=3857)  # 3395
 
     logger.debug(gdf.head())
 
-    minx, miny, maxx, maxy = gdf.geometry.total_bounds
+    # logger.debug(gdf.columns)
+    # for v in gdf[['class', 'type', 'name']].iterrows():
+    #     logger.debug(v)
+    # exit()
+
+    if bbox is None:
+        bbox = gdf.geometry.total_bounds
+    else:
+        transformer = pyproj.Transformer.from_crs(
+            "epsg:4326", "epsg:3857", always_xy=True
+        )
+        ul = transformer.transform(bbox[0], bbox[1])
+        br = transformer.transform(bbox[2], bbox[3])
+        bbox = [*ul, *br]
+        # logger.debug(f"\n{bbox}\n{gdf.geometry.total_bounds}")
+
+    minx, miny, maxx, maxy = bbox
     gdf.geometry = gdf.geometry.translate(-minx, -miny)
-    minx, miny, maxx, maxy = gdf.geometry.total_bounds
-    logger.debug((minx, miny, maxx, maxy))
+    maxx, maxy = maxx - minx, maxy - miny
 
     # gdf = gdf.scale(100000, 100000, origin=(0, 0))
 
-    viewbox = " ".join(map(str, gdf.total_bounds))
+    viewbox = " ".join(map(str, [0, 0, maxx, maxy]))
     dwg = svgwrite.Drawing(outfile, height="100%", width="100%", viewBox=(viewbox))
 
-    white = "#FFFFFF"
-    grey = "#969696"
-    dwg.fill(color=white)
-    dwg.stroke(color=grey, width=1)
+    # NOTE: Not used in SVGMeshLayer (path only)
+    dwg.fill(color=fill)
+    dwg.stroke(color=stroke, width=stroke_width)
     extras = {}
 
-    if filter:
+    if filter is not None:
         filtered_gdf = gdf[filter]
     else:
         filtered_gdf = gdf
 
     for g in filtered_gdf.geometry:
-        mp = [(x, maxy - y) for x, y in zip(*g.coords.xy)]
+        # TODO: Reconsider precision
+        mp = [(round(x, 5), round(maxy - y, 5)) for x, y in zip(*g.coords.xy)]
 
         # gr = svgwrite.container.Group(**extras)
         dp = dwg.polyline(points=mp)
@@ -58,9 +88,9 @@ def render(gdf, outfile, filter=None, optimize=True):
             dwg.write(f)
 
 
-def render_full(gdf, outfile="full.svg"):
-    render(gdf, outfile)
+def render_full(gdf, bbox=None, outfile="full.svg"):
+    render(gdf, outfile, bbox=bbox)
 
 
-def render_contour(gdf, outfile="contour.svg"):
-    render(gdf, outfile, filter=(gdf["class"] == "Cntr"))
+def render_contour(gdf, bbox=None, outfile="contour.svg"):
+    render(gdf, outfile, bbox=bbox, filter=(gdf["class"] == "Cntr"))
