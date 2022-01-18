@@ -62,8 +62,8 @@ default_properties = {
 
 
 def add(bbox, package, cache_dir):
-    basemap_zoom = 18
-    tiles = mercantile.tiles(*bbox, basemap_zoom)  # left, bottom, right, top
+    ZOOM = 18
+    tiles = mercantile.tiles(*bbox, ZOOM)  # left, bottom, right, top
     tiles = list(tiles)
     # print(tiles)
     # ul = mercantile.ul(tiles[0])
@@ -72,8 +72,8 @@ def add(bbox, package, cache_dir):
     basemap_bbox = utils.tiles_bounds(tiles)
     logger.debug(("basemap_bbox", basemap_bbox))
 
-    zoom = 16
-    tiles = mercantile.tiles(*basemap_bbox, zoom)  # left, bottom, right, top
+    ZOOM = 16
+    tiles = mercantile.tiles(*basemap_bbox, ZOOM)  # left, bottom, right, top
     # print(list(tiles))
     # tiles = mercantile.simplify(tiles)
     tiles = list(tiles)

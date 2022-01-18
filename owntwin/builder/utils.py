@@ -7,8 +7,8 @@ from loguru import logger
 from PIL import Image
 
 
-def align_bbox(bbox, basemap_zoom):
-    tiles = mercantile.tiles(*bbox, basemap_zoom)
+def align_bbox(bbox, zoom):
+    tiles = mercantile.tiles(*bbox, zoom)
     tiles = list(tiles)
     basemap_bbox = tiles_bounds(tiles)
     return basemap_bbox

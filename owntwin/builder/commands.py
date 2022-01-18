@@ -16,7 +16,7 @@ from owntwin.builtin_datasources import gsi
 
 FILENAME = "twin.json"
 BASEMAP_ZOOM = 18  # TODO: Fix
-
+DEM5A_ZOOM = 18
 
 def load_config():
     with open(FILENAME, "r") as f:
@@ -33,8 +33,7 @@ def save_config(config, path):
 def add_terrain(bbox: List[float], package):
     dl = gsi.Downloader(CACHE_DIR)  # TODO: Fix
 
-    basemap_zoom = BASEMAP_ZOOM
-    tiles = mercantile.tiles(*bbox, basemap_zoom)  # left, bottom, right, top
+    tiles = mercantile.tiles(*bbox, DEM5A_ZOOM)  # left, bottom, right, top
     tiles = list(tiles)
 
     filenames = dl.download_dem5a(tiles)
