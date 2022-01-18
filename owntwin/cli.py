@@ -93,10 +93,15 @@ def view(
 
 @app.callback()
 def main(verbose: int = typer.Option(0, "--verbose", "-v", count=True)):
-    if verbose:
+    if verbose == 1:
         logger.remove()
         logger.add(
             sys.stderr, format="{message}", level="INFO", backtrace=True, diagnose=True
+        )
+    elif verbose == 2 or verbose > 2:
+        logger.remove()
+        logger.add(
+            sys.stderr, format="{message}", level="DEBUG", backtrace=True, diagnose=True
         )
 
 
