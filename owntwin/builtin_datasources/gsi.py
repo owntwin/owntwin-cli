@@ -103,8 +103,13 @@ class Downloader(object):
 
             resp = requests.get(url)
 
+            if resp.status_code == 404:
+                data = bytes('{"type":"FeatureCollection","features":[]}', "utf-8")
+            else:
+                data = resp.content
+
             with open(filename, "wb") as f:
-                f.write(resp.content)
+                f.write(data)
 
             if len(tiles) - (i + 1) == 0:
                 continue
@@ -129,8 +134,13 @@ class Downloader(object):
 
             resp = requests.get(url)
 
+            if resp.status_code == 404:
+                data = bytes('{"type":"FeatureCollection","features":[]}', "utf-8")
+            else:
+                data = resp.content
+
             with open(filename, "wb") as f:
-                f.write(resp.content)
+                f.write(data)
 
             if len(tiles) - (i + 1) == 0:
                 continue

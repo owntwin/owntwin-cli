@@ -88,7 +88,8 @@ def add(bbox, package, cache_dir):
     merged = utils.geojson_merge(filenames)
     logger.debug(merged.head())
 
-    merged.to_file(package.assets.joinpath("fgd.geojson"), driver="GeoJSON")
+    if not merged.empty:  # TODO: Handle empty DataFrame
+        merged.to_file(package.assets.joinpath("fgd.geojson"), driver="GeoJSON")
     render_full(
         merged, bbox=basemap_bbox, outfile=package.assets.joinpath("basemap.svg")
     )
@@ -101,7 +102,8 @@ def add(bbox, package, cache_dir):
     merged = utils.geojson_merge(filenames)
     logger.debug(merged.head())
 
-    merged.to_file(package.assets.joinpath("railcl.geojson"), driver="GeoJSON")
+    if not merged.empty:
+        merged.to_file(package.assets.joinpath("railcl.geojson"), driver="GeoJSON")
     # TODO: basemap_bbox or else
     render_full(
         merged, bbox=basemap_bbox, outfile=package.assets.joinpath("railcl.svg")
@@ -115,5 +117,6 @@ def add(bbox, package, cache_dir):
     merged = utils.geojson_merge(filenames)
     logger.debug(merged.head())
 
-    merged.to_file(package.assets.joinpath("rvcl.geojson"), driver="GeoJSON")
+    if not merged.empty:
+        merged.to_file(package.assets.joinpath("rvcl.geojson"), driver="GeoJSON")
     render_full(merged, bbox=basemap_bbox, outfile=package.assets.joinpath("rvcl.svg"))
