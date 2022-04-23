@@ -24,7 +24,7 @@ colorama = "^0.4.4"
 InquirerPy = "^0.1.0"
 importlib-resources = "^5.1.0"
 xdg = "^5.0.1"
-pyproj = "^3.3.0"
+pyproj = "3.3.0" # "^3.3.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^20.8b1", allow-prereleases = true}
