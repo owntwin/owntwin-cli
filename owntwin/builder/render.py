@@ -88,9 +88,9 @@ def render(
             dwg.write(f)
 
 
-def render_full(gdf, bbox=None, outfile="full.svg"):
-    render(gdf, outfile, bbox=bbox)
+def render_full(gdf, bbox=None, outfile="full.svg", **kwargs):
+    render(gdf, outfile, bbox=bbox, **kwargs)
 
 
-def render_contour(gdf, bbox=None, outfile="contour.svg"):
-    render(gdf, outfile, bbox=bbox, filter=(gdf["class"] == "Cntr"))
+def render_contour(gdf, bbox=None, outfile="contour.svg", **kwargs):
+    render(gdf, outfile, bbox=bbox, filter=(gdf["class"] == "Cntr"), **kwargs)
