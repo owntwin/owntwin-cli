@@ -43,4 +43,4 @@ def extract_meshed_level(gdf, outfile="levelmap.json"):
                 res.append([x, y, -1])
 
     with open(outfile, "w") as f:
-        json.dump(res, f)
+        json.dump(res, f, separators=(",", ":"))
