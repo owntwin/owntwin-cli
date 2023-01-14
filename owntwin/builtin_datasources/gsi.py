@@ -4,6 +4,7 @@ from time import sleep
 import requests
 from loguru import logger
 
+RDCL_URL = "https://cyberjapandata.gsi.go.jp/xyz/experimental_rdcl/{z}/{x}/{y}.geojson"
 RAILCL_URL = (
     "https://cyberjapandata.gsi.go.jp/xyz/experimental_railcl/{z}/{x}/{y}.geojson"
 )
@@ -22,6 +23,37 @@ class Downloader(object):
         self.cwd = Path(cwd)
         self.interval = interval
 
+    def download_rdcl(self, tiles, cache=True):
+        filenames = []
+
+        for i, tile in enumerate(tiles):
+            url = RDCL_URL.format(z=tile.z, x=tile.x, y=tile.y)
+
+            filename = "rdcl-{z}_{x}_{y}.geojson".format(z=tile.z, x=tile.x, y=tile.y)
+            filename = self.cwd.joinpath(filename)
+            filenames.append(filename)
+
+            logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
+            if cache and filename.exists():
+                continue
+
+            resp = requests.get(url)
+
+            if resp.status_code == 404:
+                data = bytes('{"type":"FeatureCollection","features":[]}', "utf-8")
+            else:
+                data = resp.content
+
+            with open(filename, "wb") as f:
+                f.write(data)
+
+            if len(tiles) - (i + 1) == 0:
+                continue
+
+            sleep(self.interval)
+
+        return filenames
+
     def download_railcl(self, tiles, cache=True):
         filenames = []
 
@@ -33,7 +65,6 @@ class Downloader(object):
             filenames.append(filename)
 
             logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
-            # print(f"({i + 1}/{len(tiles)}) {url} → {str(filename).replace('nolze', 'ozekik')}")
             if cache and filename.exists():
                 continue
 
@@ -65,7 +96,6 @@ class Downloader(object):
             filenames.append(filename)
 
             logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
-            # print(f"({i + 1}/{len(tiles)}) {url} → {str(filename).replace('nolze', 'ozekik')}")
             if cache and filename.exists():
                 continue
 
@@ -97,7 +127,6 @@ class Downloader(object):
             filenames.append(filename)
 
             logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
-            # print(f"({i + 1}/{len(tiles)}) {url} → {str(filename).replace('nolze', 'ozekik')}")
             if cache and filename.exists():
                 continue
 
@@ -128,7 +157,6 @@ class Downloader(object):
             filename = self.cwd.joinpath(filename)
             filenames.append(filename)
             logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
-            # print(f"({i + 1}/{len(tiles)}) {url} → {str(filename).replace('nolze', 'ozekik')}")
             if cache and filename.exists():
                 continue
 

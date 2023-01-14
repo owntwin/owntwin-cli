@@ -28,14 +28,31 @@ definition = {
             "levels": [0],
             "path": "assets/basemap.svg",
             "format": "svg",
+            "color": "rgb(229, 231, 235)",
         },
+        {
+            "id": "rdcl",
+            "name": "道路",
+            "levels": [0],
+            "path": "assets/rdcl.svg",
+            "format": "svg",
+            "color": "rgb(209, 213, 219)",
+        },
+        # {
+        #     "id": "rdcl",
+        #     "name": "道路",
+        #     "levels": [0],
+        #     "path": "assets/rdcl.geojson",
+        #     "format": "geojson",
+        #     "colors": {"default": "rgb(255, 255, 255)"},
+        # },
         {
             "id": "railcl",
             "name": "鉄道",
             "levels": [0],
             "path": "assets/railcl.svg",
             "format": "svg",
-            "color": "rgb(156, 163, 175)",
+            "color": "rgb(14, 116, 144)",
         },
         {
             "id": "rvcl",
@@ -55,6 +72,7 @@ default_properties = {
         "iri": None,
     },
     "layers.basemap.enabled": True,
+    "layers.rdcl.enabled": True,
     "layers.railcl.enabled": True,
     "layers.rvcl.enabled": True,
 }
@@ -93,6 +111,19 @@ def add(bbox, package, cache_dir):
     render_full(
         merged, bbox=basemap_bbox, outfile=package.assets.joinpath("basemap.svg")
     )
+
+    ### roadmap (rdcl)
+    RDCL_ZOOM = 16  # TODO: Must be consistent with BASEMAP_ZOOM
+    tiles = bbox_to_tiles(bbox, RDCL_ZOOM)
+    filenames = dl.download_rdcl(tiles)
+
+    merged = utils.geojson_merge(filenames)
+    logger.debug(merged.head())
+
+    if not merged.empty:
+        merged.to_file(package.assets.joinpath("rdcl.geojson"), driver="GeoJSON")
+    # TODO: basemap_bbox or else
+    render_full(merged, bbox=basemap_bbox, outfile=package.assets.joinpath("rdcl.svg"))
 
     ### railmap (railcl)
     RAILCL_ZOOM = 16  # TODO: Must be consistent with BASEMAP_ZOOM
