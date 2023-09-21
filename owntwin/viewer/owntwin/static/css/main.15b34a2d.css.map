@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/main.15b34a2d.css","mappings":"AAAA,aACE,YACF","sources":["App.css"],"sourcesContent":["canvas:focus {\n  outline: none;\n}"],"names":[],"sourceRoot":""}
