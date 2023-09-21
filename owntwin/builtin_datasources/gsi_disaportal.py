@@ -38,7 +38,7 @@ class Downloader(object):
             tiledata.append(td)
 
             logger.info(f"({i + 1}/{len(tiles)}) {url} → {filename}")
-            # logger.info(f"({i + 1}/{len(tiles)}) {url} → {str(filename).replace('nolze', 'ozekik')}")
+
             if cache and filename.exists():
                 continue
 

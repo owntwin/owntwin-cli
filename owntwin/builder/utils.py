@@ -3,6 +3,7 @@ import math
 import geopandas as gpd
 import geopy.distance
 import mercantile
+import pandas as pd
 from loguru import logger
 from PIL import Image
 
@@ -73,7 +74,7 @@ def geojson_merge(geojson_filenames):
     else:
         return None
     for filename in geojson_filenames[1:]:
-        gdf = gdf.append(gpd.read_file(filename))
+        gdf = pd.concat([gdf, gpd.read_file(filename)])
     return gdf
 
 

@@ -6,7 +6,7 @@ import urllib
 from functools import partial
 from pathlib import Path
 
-import importlib_resources
+import importlib.resources
 import typer
 from loguru import logger
 
@@ -75,10 +75,12 @@ def view(
                 path += "/"
             return path
 
+    viewer_dir = importlib.resources.files("owntwin.viewer.owntwin").joinpath("")
+
     Handler = partial(
         RequestHandler,
         # directory=Path(__file__).parent.joinpath("./viewer/owntwin/"),
-        directory=importlib_resources.files("owntwin.viewer.owntwin").joinpath("."),
+        directory=viewer_dir,
     )
 
     Server = socketserver.TCPServer
